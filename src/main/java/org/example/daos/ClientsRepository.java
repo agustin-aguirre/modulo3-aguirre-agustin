@@ -68,7 +68,7 @@ public class ClientsRepository implements EntityDao<Client, Integer> {
              PreparedStatement stmt = conn.prepareStatement(UPDATE_COMMAND)) {
 
             stmt.setString(1, updatedEntity.getName());
-            stmt.setLong(2, updatedEntity.getId());
+            stmt.setInt(2, updatedEntity.getId());
 
             stmt.executeUpdate();
 
@@ -78,11 +78,12 @@ public class ClientsRepository implements EntityDao<Client, Integer> {
     }
 
     @Override
-    public Optional<Client> get(long id) {
+    public Optional<Client> get(Integer id) {
         Optional<Client> result = Optional.empty();
         try (Connection conn = connProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(GET_BY_ID_QUERY)) {
 
+            stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {

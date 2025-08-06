@@ -77,11 +77,12 @@ public class AppointmentsRepository implements EntityDao<Appointment, Integer> {
     }
 
     @Override
-    public Optional<Appointment> get(long id) {
+    public Optional<Appointment> get(Integer id) {
         Optional<Appointment> result = Optional.empty();
         try (Connection conn = connProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(GET_BY_ID_QUERY)) {
 
+            stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
