@@ -8,7 +8,6 @@ import org.example.daos.ClientsRepository;
 import org.example.daos.EntityDao;
 import org.example.entities.Appointment;
 import org.example.entities.Client;
-import org.example.services.appointments.AppointmentsService;
 import org.example.services.appointments.AppointmentsServiceImpl;
 import org.example.services.clients.ClientsServiceImpl;
 
@@ -29,10 +28,7 @@ public class App
         );
         EntityDao<Client, Integer> clientsRepo = new ClientsRepository(connProvider);
         EntityDao<Appointment, Integer> appointmentsRepo = new AppointmentsRepository(connProvider);
-
-        ClientsServiceImpl clientsService = new ClientsServiceImpl(clientsRepo);
         AppointmentsServiceImpl appointmentsService = new AppointmentsServiceImpl(appointmentsRepo, clientsRepo);
-
         AppointmentsController controller = new AppointmentsController(appointmentsService);
     }
 }
