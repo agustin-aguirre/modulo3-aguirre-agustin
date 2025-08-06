@@ -1,6 +1,7 @@
 package org.example.daos;
 
 import org.example.connections.SqlConnectionProvider;
+import org.example.daos.exceptions.PersistenceException;
 import org.example.entities.Doctor;
 
 import java.sql.*;
@@ -20,20 +21,28 @@ public class DoctorsRepository implements EntityDao<Doctor, Long> {
         this.connProvider = connProvider;
     }
 
-
     @Override
-    public void add(Doctor newEntity) {
-        try (Connection conn = connProvider.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(STORE_NEW_COMMAND)) {
+    public Doctor add(Doctor newEntity) {
+        try (
+            Connection conn = connProvider.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(STORE_NEW_COMMAND, Statement.RETURN_GENERATED_KEYS)
+        ) {
 
             stmt.setString(1, newEntity.getName());
             stmt.setString(2, newEntity.getSpecialization());
 
-            stmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
 
+            if (rowsAffected == 0) {
+                throw new SQLException("Couldn't add record");
+            }
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                newEntity.setId(generatedKeys.getLong(1));
+                return newEntity;
+            }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException("Failed to store new entity: " + e.getMessage(), e);
         }
     }
 
@@ -47,7 +56,7 @@ public class DoctorsRepository implements EntityDao<Doctor, Long> {
             stmt.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException("Failed to delete entity: " + e.getMessage(), e);
         }
     }
 
@@ -63,7 +72,7 @@ public class DoctorsRepository implements EntityDao<Doctor, Long> {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException("Failed to update entity: " + e.getMessage(), e);
         }
     }
 
@@ -87,7 +96,7 @@ public class DoctorsRepository implements EntityDao<Doctor, Long> {
 
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException("Failed to fetch entity: " + e.getMessage(), e);
         }
         return result;
     }
@@ -110,7 +119,7 @@ public class DoctorsRepository implements EntityDao<Doctor, Long> {
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException("Failed to fetch multiple entities: " + e.getMessage(), e);
         }
 
         return results;

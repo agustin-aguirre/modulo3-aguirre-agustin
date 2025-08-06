@@ -1,19 +1,19 @@
 package org.example.daos;
 
 import org.example.connections.SqlConnectionProvider;
+import org.example.daos.exceptions.PersistenceException;
 import org.example.entities.Appointment;
-import org.example.entities.Doctor;
 
 import java.sql.*;
 import java.util.*;
 
 public class AppointmentsRepository implements EntityDao<Appointment, Long> {
 
-    private final static String STORE_NEW_COMMAND = "INSERT INTO apointments (doctor_id, date_time, pacient_name) VALUES (?, ?, ?)";
-    private final static String DELETE_COMMAND = "DELETE FROM apointments WHERE id = ?";
-    private final static String UPDATE_COMMAND = "UPDATE apointments SET doctor_id = ?, date_time = ?, pacient_name = ? WHERE id = ?";
-    private final static String GET_BY_ID_QUERY = "SELECT * FROM apointments WHERE id = ?";
-    private final static String GET_ALL_QUERY = "SELECT * FROM apointments";
+    private final static String STORE_NEW_COMMAND = "INSERT INTO appointments (doctor_id, date_time, pacient_name) VALUES (?, ?, ?)";
+    private final static String DELETE_COMMAND = "DELETE FROM appointments WHERE id = ?";
+    private final static String UPDATE_COMMAND = "UPDATE appointments SET doctor_id = ?, date_time = ?, pacient_name = ? WHERE id = ?";
+    private final static String GET_BY_ID_QUERY = "SELECT * FROM appointments WHERE id = ?";
+    private final static String GET_ALL_QUERY = "SELECT * FROM appointments";
 
     private final SqlConnectionProvider connProvider;
 
@@ -21,21 +21,29 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
         this.connProvider = connProvider;
     }
 
-
     @Override
-    public void add(Appointment newEntity) {
-        try (Connection conn = connProvider.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(STORE_NEW_COMMAND)) {
+    public Appointment add(Appointment newEntity) {
+        try (
+            Connection conn = connProvider.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(STORE_NEW_COMMAND, Statement.RETURN_GENERATED_KEYS)
+        ) {
 
             stmt.setLong(1, newEntity.getDoctorId());
             stmt.setTimestamp(2, Timestamp.valueOf(newEntity.getDateTime()));
             stmt.setString(3, newEntity.getPacientName());
 
-            stmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
 
+            if (rowsAffected == 0) {
+                throw new SQLException("Couldn't add record");
+            }
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                newEntity.setId(generatedKeys.getLong(1));
+                return newEntity;
+            }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException("Failed to store new entity: " + e.getMessage(), e);
         }
     }
 
@@ -49,7 +57,7 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
             stmt.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException("Failed to delete entity: " + e.getMessage(), e);
         }
     }
 
@@ -66,7 +74,7 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException("Failed to update entity: " + e.getMessage(), e);
         }
     }
 
@@ -88,7 +96,7 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException("Failed to fetch entity: " + e.getMessage(), e);
         }
 
         return result;
@@ -113,7 +121,7 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistenceException("Failed to fetch multiple entities: " + e.getMessage(), e);
         }
 
         return results;
