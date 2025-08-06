@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Appointment {
     private long id;
-    private Doctor doctor;
+    private long doctorId;
     private LocalDateTime dateTime;
     private String pacientName;
 
@@ -16,12 +16,12 @@ public class Appointment {
         this.id = id;
     }
 
-    public Doctor getDoctor() {
-        return doctor;
+    public long getDoctorId() {
+        return doctorId;
     }
 
-    public void setDoctor(Doctor doctor) {
-        this.doctor = doctor;
+    public void setDoctorId(long doctorId) {
+        this.doctorId = doctorId;
     }
 
     public LocalDateTime getDateTime() {

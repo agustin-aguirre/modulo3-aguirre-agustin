@@ -27,7 +27,7 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
         try (Connection conn = connProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(STORE_NEW_COMMAND)) {
 
-            stmt.setLong(1, newEntity.getDoctor().getId());
+            stmt.setLong(1, newEntity.getDoctorId());
             stmt.setTimestamp(2, Timestamp.valueOf(newEntity.getDateTime()));
             stmt.setString(3, newEntity.getPacientName());
 
@@ -58,7 +58,7 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
         try (Connection conn = connProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_COMMAND)) {
 
-            stmt.setLong(1, updatedEntity.getDoctor().getId());
+            stmt.setLong(1, updatedEntity.getDoctorId());
             stmt.setTimestamp(2, Timestamp.valueOf(updatedEntity.getDateTime()));
             stmt.setString(3, updatedEntity.getPacientName());
             stmt.setLong(4, id);
@@ -81,11 +81,7 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
             while (rs.next()) {
                 Appointment appointment = new Appointment();
                 appointment.setId(rs.getLong("id"));
-
-                Doctor doctor = new Doctor();
-                doctor.setId(rs.getLong("doctor_id"));
-                appointment.setDoctor(doctor);
-
+                appointment.setDoctorId(rs.getLong("doctor_id"));
                 appointment.setDateTime(rs.getTimestamp("date_time").toLocalDateTime());
                 appointment.setPacientName(rs.getString("pacient_name"));
                 result = Optional.of(appointment);
@@ -110,11 +106,7 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
             while (rs.next()) {
                 Appointment appointment = new Appointment();
                 appointment.setId(rs.getLong("id"));
-
-                Doctor doctor = new Doctor();
-                doctor.setId(rs.getLong("doctor_id"));
-                appointment.setDoctor(doctor);
-
+                appointment.setDoctorId(rs.getLong("doctor_id"));
                 appointment.setDateTime(rs.getTimestamp("date_time").toLocalDateTime());
                 appointment.setPacientName(rs.getString("pacient_name"));
                 results.add(appointment);

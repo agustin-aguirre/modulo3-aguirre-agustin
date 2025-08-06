@@ -8,11 +8,7 @@ import org.example.daos.EntityDao;
 import org.example.entities.Appointment;
 import org.example.entities.Doctor;
 
-/**
- * Hello world!
- *
- */
-public class App 
+public class App
 {
     public static void main( String[] args )
     {
@@ -24,6 +20,6 @@ public class App
         EntityDao<Doctor, Long> doctorsRepo = new DoctorsRepository(connProvider);
         EntityDao<Appointment, Long> appointmentsRepo = new AppointmentsRepository(connProvider);
 
-
+        System.out.println(doctorsRepo.getAll());
     }
 }
