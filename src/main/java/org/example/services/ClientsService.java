@@ -35,17 +35,21 @@ public class ClientsService {
         return new ClientDto(newClient.getId(), newClient.getName());
     }
 
-    public void updateClient(Integer id, RegisterClientDto registerClientDto) {
+    public void updateClient(Integer id, ClientDto updatedClientDto) {
+        if (!updatedClientDto.id().equals(id)) {
+            throw new IllegalArgumentException("Ids dont match");
+        }
         // El nombre del cliente no puede estar vacío o ser null
         if (repo.get(id).isEmpty()) {
             throw new NoSuchElementException();
         }
-        if (registerClientDto.name().isEmpty()) {
+        if (updatedClientDto.name().isEmpty()) {
             throw new IllegalArgumentException();
         }
-        Client newClient = new Client();
-        // Se le quitan los espacios excesivos
-        newClient.setName(registerClientDto.name().trim());
+        Client newClient = new Client(
+            id,
+            updatedClientDto.name().trim() // Se le quitan los espacios excesivos
+        );
         try {
             repo.update(newClient);
         } catch (PersistenceException e) {
