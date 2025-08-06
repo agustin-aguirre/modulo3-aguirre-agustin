@@ -92,7 +92,7 @@ public class AppointmentsService {
         // filtrado y mapeo todo en uno
         ClientDto clientDto = new ClientDto(clientId, target.get().getName());
         return repo.getAll().stream()
-                .filter(appointment -> appointment.getId().equals(clientId))
+                .filter(appointment -> appointment.getClientId().equals(clientId))
                 .map(appointment -> new AppointmentDto(appointment.getId(), clientDto, appointment.getDateTime()))
                 .toList();
     }

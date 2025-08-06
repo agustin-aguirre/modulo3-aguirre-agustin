@@ -7,6 +7,8 @@ import org.example.daos.ClientsRepository;
 import org.example.daos.EntityDao;
 import org.example.entities.Appointment;
 import org.example.entities.Client;
+import org.example.services.AppointmentsService;
+import org.example.services.ClientsService;
 
 
 public class App
@@ -21,6 +23,9 @@ public class App
         EntityDao<Client, Integer> clientsRepo = new ClientsRepository(connProvider);
         EntityDao<Appointment, Integer> appointmentsRepo = new AppointmentsRepository(connProvider);
 
-        System.out.println(clientsRepo.getAll());
+        ClientsService clientsService = new ClientsService(clientsRepo);
+        AppointmentsService appointmentsService = new AppointmentsService(appointmentsRepo, clientsRepo);
+
+        System.out.println(appointmentsService.getAppointmentsOfClient(1));
     }
 }
