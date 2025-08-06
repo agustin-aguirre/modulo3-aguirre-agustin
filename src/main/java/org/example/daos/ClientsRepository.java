@@ -63,12 +63,12 @@ public class ClientsRepository implements EntityDao<Client, Integer> {
     }
 
     @Override
-    public void update(Integer id, Client updatedEntity) {
+    public void update(Client updatedEntity) {
         try (Connection conn = connProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_COMMAND)) {
 
             stmt.setString(1, updatedEntity.getName());
-            stmt.setLong(2, id);
+            stmt.setLong(2, updatedEntity.getId());
 
             stmt.executeUpdate();
 

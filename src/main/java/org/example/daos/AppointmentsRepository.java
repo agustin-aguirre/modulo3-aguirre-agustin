@@ -61,13 +61,13 @@ public class AppointmentsRepository implements EntityDao<Appointment, Integer> {
     }
 
     @Override
-    public void update(Integer id, Appointment updatedEntity) {
+    public void update(Appointment updatedEntity) {
         try (Connection conn = connProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_COMMAND)) {
 
             stmt.setInt(1, updatedEntity.getClientId());
             stmt.setTimestamp(2, Timestamp.valueOf(updatedEntity.getDateTime()));
-            stmt.setInt(3, id);
+            stmt.setInt(3, updatedEntity.getId());
 
             stmt.executeUpdate();
 

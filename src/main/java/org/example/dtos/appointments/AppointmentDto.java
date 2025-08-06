@@ -4,5 +4,5 @@ import org.example.dtos.clients.ClientDto;
 
 import java.time.LocalDateTime;
 
-public record AppointmentDto (Long id, ClientDto clientDto, LocalDateTime dateTime)
+public record AppointmentDto (Integer id, ClientDto clientDto, LocalDateTime dateTime)
 { }
