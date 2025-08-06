@@ -1,4 +1,4 @@
-package org.example.services;
+package org.example.services.clients;
 
 import org.example.daos.EntityDao;
 import org.example.daos.exceptions.PersistenceException;
@@ -9,15 +9,16 @@ import org.example.entities.Client;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-public class ClientsService {
+public class ClientsServiceImpl implements ClientsService {
 
     private final EntityDao<Client, Integer> repo;
 
-    public ClientsService(EntityDao<Client, Integer> repo) {
+    public ClientsServiceImpl(EntityDao<Client, Integer> repo) {
         this.repo = repo;
     }
 
 
+    @Override
     public ClientDto registerClient(RegisterClientDto registerClientDto) {
         // El nombre del cliente no puede estar vacío o ser null
         if (registerClientDto.name().isEmpty()) {
@@ -35,6 +36,7 @@ public class ClientsService {
         return new ClientDto(newClient.getId(), newClient.getName());
     }
 
+    @Override
     public void updateClient(Integer id, ClientDto updatedClientDto) {
         if (!updatedClientDto.id().equals(id)) {
             throw new IllegalArgumentException("Ids dont match");
@@ -57,6 +59,7 @@ public class ClientsService {
         }
     }
 
+    @Override
     public ClientDto getClientWithId(Integer id) {
         Optional<Client> target = repo.get(id);
         if (target.isEmpty()) {

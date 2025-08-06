@@ -1,4 +1,4 @@
-package org.example.services;
+package org.example.services.appointments;
 
 import org.example.daos.EntityDao;
 import org.example.daos.exceptions.PersistenceException;
@@ -15,16 +15,17 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-public class AppointmentsService {
+public class AppointmentsServiceImpl implements AppointmentsService {
 
     private final EntityDao<Appointment, Integer> repo;
     private final EntityDao<Client, Integer> clientsRepo;
 
-    public AppointmentsService(EntityDao<Appointment, Integer> repo, EntityDao<Client, Integer> clientsRepo) {
+    public AppointmentsServiceImpl(EntityDao<Appointment, Integer> repo, EntityDao<Client, Integer> clientsRepo) {
         this.repo = repo;
         this.clientsRepo = clientsRepo;
     }
 
+    @Override
     public AppointmentDto makeAppointment(MakeAppointmentDto makeAppointmentDto) {
         // El cliente debe estar registrado
         Optional<Client> targetClient = clientsRepo.get(makeAppointmentDto.clientId());
@@ -63,6 +64,7 @@ public class AppointmentsService {
         return new AppointmentDto(newAppointment.getId(), clientDto, newAppointment.getDateTime());
     }
 
+    @Override
     public void cancelAppointment(Integer appointmentId) {
         Optional<Appointment> target = repo.get(appointmentId);
         // tiene que existir
@@ -82,6 +84,7 @@ public class AppointmentsService {
         }
     }
 
+    @Override
     public Collection<AppointmentDto> getAppointmentsOfClient(Integer clientId) {
         // el cliente debe estar registrado
         Optional<Client> target = clientsRepo.get(clientId);
