@@ -5,7 +5,6 @@ import org.example.dtos.EmptyApiResponse;
 import org.example.dtos.appointments.AppointmentDto;
 import org.example.dtos.appointments.MakeAppointmentDto;
 import org.example.services.appointments.AppointmentsService;
-import org.example.services.clients.ClientsService;
 
 import java.util.Collection;
 import java.util.NoSuchElementException;
