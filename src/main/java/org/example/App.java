@@ -2,11 +2,13 @@ package org.example;
 
 import org.example.connections.DbConnectionProvider;
 import org.example.connections.SqlConnectionProvider;
+import org.example.controllers.AppointmentsController;
 import org.example.daos.AppointmentsRepository;
 import org.example.daos.ClientsRepository;
 import org.example.daos.EntityDao;
 import org.example.entities.Appointment;
 import org.example.entities.Client;
+import org.example.services.appointments.AppointmentsService;
 import org.example.services.appointments.AppointmentsServiceImpl;
 import org.example.services.clients.ClientsServiceImpl;
 
@@ -15,6 +17,11 @@ public class App
 {
     public static void main( String[] args )
     {
+        run();
+    }
+
+
+    public static void run() {
         SqlConnectionProvider connProvider = new DbConnectionProvider(
                 System.getenv("DB_URL"),
                 System.getenv("DB_USER"),
@@ -26,13 +33,6 @@ public class App
         ClientsServiceImpl clientsService = new ClientsServiceImpl(clientsRepo);
         AppointmentsServiceImpl appointmentsService = new AppointmentsServiceImpl(appointmentsRepo, clientsRepo);
 
-
-//        var newClientDto = clientsService.registerClient(new RegisterClientDto("Juan Perez"));
-//        clientsService.updateClient(newClientDto.id(), new ClientDto(newClientDto.id(), "Juansito Perezito"));
-        System.out.println(clientsService.getClientWithId(9));
-
-
-        // appointmentsService.makeAppointment(new MakeAppointmentDto(newClientDto.id(), LocalDateTime.of(2025, 8, 8, 15, 0)));
-        // System.out.println(appointmentsService.getAppointmentsOfClient(newClientDto.id()));
+        AppointmentsController controller = new AppointmentsController(appointmentsService);
     }
 }
