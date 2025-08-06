@@ -7,11 +7,11 @@ import org.example.entities.Appointment;
 import java.sql.*;
 import java.util.*;
 
-public class AppointmentsRepository implements EntityDao<Appointment, Long> {
+public class AppointmentsRepository implements EntityDao<Appointment, Integer> {
 
-    private final static String STORE_NEW_COMMAND = "INSERT INTO appointments (doctor_id, date_time, pacient_name) VALUES (?, ?, ?)";
+    private final static String STORE_NEW_COMMAND = "INSERT INTO appointments (client_id, date_time) VALUES (?, ?)";
     private final static String DELETE_COMMAND = "DELETE FROM appointments WHERE id = ?";
-    private final static String UPDATE_COMMAND = "UPDATE appointments SET doctor_id = ?, date_time = ?, pacient_name = ? WHERE id = ?";
+    private final static String UPDATE_COMMAND = "UPDATE appointments SET client_id = ?, date_time = ? WHERE id = ?";
     private final static String GET_BY_ID_QUERY = "SELECT * FROM appointments WHERE id = ?";
     private final static String GET_ALL_QUERY = "SELECT * FROM appointments";
 
@@ -28,9 +28,8 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
             PreparedStatement stmt = conn.prepareStatement(STORE_NEW_COMMAND, Statement.RETURN_GENERATED_KEYS)
         ) {
 
-            stmt.setLong(1, newEntity.getDoctorId());
+            stmt.setInt(1, newEntity.getClientId());
             stmt.setTimestamp(2, Timestamp.valueOf(newEntity.getDateTime()));
-            stmt.setString(3, newEntity.getPacientName());
 
             int rowsAffected = stmt.executeUpdate();
 
@@ -38,7 +37,7 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
                 throw new SQLException("Couldn't add record");
             }
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                newEntity.setId(generatedKeys.getLong(1));
+                newEntity.setId(generatedKeys.getInt(1));
                 return newEntity;
             }
         }
@@ -48,11 +47,11 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         try (Connection conn = connProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(DELETE_COMMAND)) {
 
-            stmt.setLong(1, id);
+            stmt.setInt(1, id);
 
             stmt.executeUpdate();
         }
@@ -62,14 +61,13 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
     }
 
     @Override
-    public void update(Long id, Appointment updatedEntity) {
+    public void update(Integer id, Appointment updatedEntity) {
         try (Connection conn = connProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_COMMAND)) {
 
-            stmt.setLong(1, updatedEntity.getDoctorId());
+            stmt.setInt(1, updatedEntity.getClientId());
             stmt.setTimestamp(2, Timestamp.valueOf(updatedEntity.getDateTime()));
-            stmt.setString(3, updatedEntity.getPacientName());
-            stmt.setLong(4, id);
+            stmt.setInt(3, id);
 
             stmt.executeUpdate();
 
@@ -87,11 +85,11 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Appointment appointment = new Appointment();
-                appointment.setId(rs.getLong("id"));
-                appointment.setDoctorId(rs.getLong("doctor_id"));
-                appointment.setDateTime(rs.getTimestamp("date_time").toLocalDateTime());
-                appointment.setPacientName(rs.getString("pacient_name"));
+                Appointment appointment = new Appointment(
+                    rs.getInt("id"),
+                    rs.getInt("client_id"),
+                    rs.getTimestamp("date_time").toLocalDateTime()
+                );
                 result = Optional.of(appointment);
             }
         }
@@ -112,12 +110,11 @@ public class AppointmentsRepository implements EntityDao<Appointment, Long> {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Appointment appointment = new Appointment();
-                appointment.setId(rs.getLong("id"));
-                appointment.setDoctorId(rs.getLong("doctor_id"));
-                appointment.setDateTime(rs.getTimestamp("date_time").toLocalDateTime());
-                appointment.setPacientName(rs.getString("pacient_name"));
-                results.add(appointment);
+                results.add(new Appointment(
+                    rs.getInt("id"),
+                    rs.getInt("client_id"),
+                    rs.getTimestamp("date_time").toLocalDateTime()
+                ));
             }
         }
         catch (SQLException e) {

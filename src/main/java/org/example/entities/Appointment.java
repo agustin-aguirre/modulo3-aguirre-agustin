@@ -3,25 +3,32 @@ package org.example.entities;
 import java.time.LocalDateTime;
 
 public class Appointment {
-    private long id;
-    private long doctorId;
+    private Integer id;
+    private Integer clientId;
     private LocalDateTime dateTime;
-    private String pacientName;
 
-    public long getId() {
+    public Appointment() { }
+
+    public Appointment(Integer id, Integer clientId, LocalDateTime dateTime) {
+        this.id = id;
+        this.clientId = clientId;
+        this.dateTime = dateTime;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public long getDoctorId() {
-        return doctorId;
+    public Integer getClientId() {
+        return clientId;
     }
 
-    public void setDoctorId(long doctorId) {
-        this.doctorId = doctorId;
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
     }
 
     public LocalDateTime getDateTime() {
@@ -30,13 +37,5 @@ public class Appointment {
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
-    }
-
-    public String getPacientName() {
-        return pacientName;
-    }
-
-    public void setPacientName(String pacientName) {
-        this.pacientName = pacientName;
     }
 }
