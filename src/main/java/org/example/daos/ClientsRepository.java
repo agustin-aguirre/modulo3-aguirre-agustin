@@ -39,8 +39,13 @@ public class ClientsRepository implements EntityDao<Client, Integer> {
                 throw new SQLException("Couldn't add record");
             }
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                newEntity.setId(generatedKeys.getInt(1));
-                return newEntity;
+                if (generatedKeys.next()) {
+                    newEntity.setId(generatedKeys.getInt(1));
+                    return newEntity;
+                }
+                else {
+                    throw new SQLException("No Id returned.");
+                }
             }
         }
         catch (SQLException e) {
