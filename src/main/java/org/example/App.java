@@ -7,8 +7,8 @@ import org.example.daos.ClientsRepository;
 import org.example.daos.EntityDao;
 import org.example.entities.Appointment;
 import org.example.entities.Client;
-import org.example.services.AppointmentsService;
-import org.example.services.ClientsService;
+import org.example.services.appointments.AppointmentsServiceImpl;
+import org.example.services.clients.ClientsServiceImpl;
 
 
 public class App
@@ -23,9 +23,16 @@ public class App
         EntityDao<Client, Integer> clientsRepo = new ClientsRepository(connProvider);
         EntityDao<Appointment, Integer> appointmentsRepo = new AppointmentsRepository(connProvider);
 
-        ClientsService clientsService = new ClientsService(clientsRepo);
-        AppointmentsService appointmentsService = new AppointmentsService(appointmentsRepo, clientsRepo);
+        ClientsServiceImpl clientsService = new ClientsServiceImpl(clientsRepo);
+        AppointmentsServiceImpl appointmentsService = new AppointmentsServiceImpl(appointmentsRepo, clientsRepo);
 
-        System.out.println(appointmentsService.getAppointmentsOfClient(1));
+
+//        var newClientDto = clientsService.registerClient(new RegisterClientDto("Juan Perez"));
+//        clientsService.updateClient(newClientDto.id(), new ClientDto(newClientDto.id(), "Juansito Perezito"));
+        System.out.println(clientsService.getClientWithId(9));
+
+
+        // appointmentsService.makeAppointment(new MakeAppointmentDto(newClientDto.id(), LocalDateTime.of(2025, 8, 8, 15, 0)));
+        // System.out.println(appointmentsService.getAppointmentsOfClient(newClientDto.id()));
     }
 }
