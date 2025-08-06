@@ -2,7 +2,7 @@ package org.example.entities;
 
 import java.time.LocalDateTime;
 
-public class Apointment {
+public class Appointment {
     private long id;
     private Doctor doctor;
     private LocalDateTime dateTime;
