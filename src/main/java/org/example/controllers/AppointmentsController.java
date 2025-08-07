@@ -16,7 +16,7 @@ import org.example.services.appointments.AppointmentsService;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
-@Tag(name = "Appointments", description = "Appointment related operations")
+@Tag(name = "Turnos", description = "Operaciones relacionadas con reservas de turnos")
 public class AppointmentsController {
 
     private final AppointmentsService appointmentsService;
@@ -27,21 +27,22 @@ public class AppointmentsController {
 
 
     @Operation(
-            summary = "Makes an appointments",
-            description = "Makes an appointment for a register user within working hours and week days. Returns the created appointment data.",
+            tags = { "Turnos" },
+            summary = " Reserva un Turno",
+            description = "Reserva un turno para un usuario registrado dentro de los días y horas laborales (de Lunes a Viernes entre las 9:00 y las 18:00). Retorna la reserva creada.",
             responses = {
                     @ApiResponse(
                             responseCode = "201",
-                            description = "The created appointement data.",
+                            description = "Los datos de la reserva creada.",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppResponse.class))
                     ),
-                    @ApiResponse(responseCode = "400", description = "Some data sent is not valid."),
-                    @ApiResponse(responseCode = "404", description = "The client is not registered."),
-                    @ApiResponse(responseCode = "500", description = "Some unknown error happened.")
+                    @ApiResponse(responseCode = "400", description = " Uno de los datos pasados no era correcto."),
+                    @ApiResponse(responseCode = "404", description = "El cliente no está registrado."),
+                    @ApiResponse(responseCode = "500", description = "Ocurrió un error desconocido.")
             }
     )
     public AppResponse<AppointmentDto> makeAppointment(
-            @Parameter(description = "The minimum necesary data to make an appointment.")
+            @Parameter(description = "Los datos mínimos para reservar un turno.")
             MakeAppointmentDto makeAppointmentDto
     ) {
         try {
@@ -60,21 +61,22 @@ public class AppointmentsController {
     }
 
     @Operation(
-            summary = "Cancels an appointment",
-            description = "Cancels a future appointment, given its id.",
+            tags = { "Turnos" },
+            summary = "Cancela una reserva.",
+            description = "Cancela una reserva en una fecha futura a partir de su id.",
             responses = {
                     @ApiResponse(
                             responseCode = "204",
-                            description = "The appointment was successfully cancelled.",
+                            description = "La reserva fue cancelada exitosamente.",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = EmptyAppResponse.class))
                     ),
-                    @ApiResponse(responseCode = "400", description = "Attempted to cancel a past appointment."),
-                    @ApiResponse(responseCode = "404", description = "The appointement wasn't found."),
-                    @ApiResponse(responseCode = "500", description = "Some unknown error happened.")
+                    @ApiResponse(responseCode = "400", description = "Intentó cancelar una reserva pasada."),
+                    @ApiResponse(responseCode = "404", description = "La reserva no se pudo encontrar."),
+                    @ApiResponse(responseCode = "500", description = "Ocurrió un error desconocido.")
             }
     )
     public EmptyAppResponse cancelAppointment(
-            @Parameter(description = "The appointment's id")
+            @Parameter(description = "El id de la reserva.")
             int appointmentId) {
         try {
             appointmentsService.cancelAppointment(appointmentId);
@@ -92,20 +94,21 @@ public class AppointmentsController {
     }
 
     @Operation(
-            summary = "All the appointments of a given client.",
-            description = "Returns all the appointments (past and future) of a client, given its id.",
+            tags = { "Turnos" },
+            summary = "Todas las reservas de un cliente.",
+            description = "Retorna todas las reservas de un cliente (futuras y pasadas) a partir del id del cliente.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "All the appointments of the given client.",
+                            description = "Todas las reservas del cliente.",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppResponse.class))
                     ),
-                    @ApiResponse(responseCode = "404", description = "The client is not registered."),
-                    @ApiResponse(responseCode = "500", description = "Some unknown error happened.")
+                    @ApiResponse(responseCode = "404", description = "El cliente no está registrado."),
+                    @ApiResponse(responseCode = "500", description = "Ocurrió un error desconocido.")
             }
     )
     public AppResponse<Collection<AppointmentDto>> getAppointmentsFromClient(
-            @Parameter(description = "The client's id.")
+            @Parameter(description = "El id del cliente.")
             int clientId
     ) {
         try {
